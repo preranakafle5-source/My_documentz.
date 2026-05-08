@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Travel Blog</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Georgia, serif; background-color: #f5f0eb; color: #333; }
+
+    /* HEADER */
+    header { background-color: #2c7a4b; color: white; text-align: center; padding: 40px 20px; }
+    header h1 { font-size: 40px; margin-bottom: 8px; letter-spacing: 1px; }
+    header p { font-size: 16px; color: #c8e6c9; }
+
+    /* NAVIGATION */
+    nav { background-color: #1e5c38; text-align: center; padding: 12px; }
+    nav a { color: white; text-decoration: none; margin: 0 15px; font-size: 16px; transition: color 0.3s; cursor: pointer; }
+    nav a:hover, nav a.active { text-decoration: underline; color: #c8e6c9; }
+
+    /* PAGES */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+
+    /* ABOUT SECTION (home intro) */
+    .about { background-color: white; border-radius: 8px; padding: 25px; margin-bottom: 30px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
+    .about h2 { color: #2c7a4b; font-size: 24px; margin-bottom: 12px; }
+    .about p { font-size: 16px; line-height: 1.8; color: #555; }
+
+    /* BLOG CARD */
+    .blog-card { background-color: white; border-radius: 8px; margin-bottom: 30px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; }
+    .blog-card img { width: 100%; height: 240px; object-fit: cover; display: block; }
+    .card-content { padding: 20px; }
+    .card-content h2 { font-size: 22px; color: #2c7a4b; margin-bottom: 8px; }
+    .card-content .date { font-size: 13px; color: #999; margin-bottom: 12px; }
+    .card-content p { font-size: 15px; line-height: 1.8; color: #555; }
+    .read-more { display: inline-block; margin-top: 16px; color: #2c7a4b; font-weight: bold;
+      text-decoration: none; cursor: pointer; }
+    .read-more:hover { text-decoration: underline; }
+
+    /* DESTINATIONS GRID */
+    .dest-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-top: 10px; }
+    .dest-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .dest-card img { width: 100%; height: 180px; object-fit: cover; }
+    .dest-card .dest-info { padding: 16px; }
+    .dest-card h3 { color: #2c7a4b; font-size: 18px; margin-bottom: 6px; }
+    .dest-card p { font-size: 14px; color: #666; line-height: 1.6; }
+    .dest-tag { display: inline-block; background: #e8f5e9; color: #2c7a4b; font-size: 12px;
+      padding: 3px 10px; border-radius: 20px; margin-top: 8px; }
+
+    /* ABOUT PAGE */
+    .about-page { background: white; border-radius: 8px; padding: 35px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .about-page h2 { color: #2c7a4b; font-size: 28px; margin-bottom: 16px; }
+    .about-page p { font-size: 16px; line-height: 1.9; color: #555; margin-bottom: 16px; }
+    .about-page .stats { display: flex; gap: 24px; margin: 24px 0; flex-wrap: wrap; }
+    .stat-box { background: #e8f5e9; border-radius: 8px; padding: 20px 30px; text-align: center; flex: 1; min-width: 120px; }
+    .stat-box h3 { font-size: 32px; color: #2c7a4b; }
+    .stat-box p { font-size: 13px; color: #555; margin-top: 4px; }
+    .about-page h3 { color: #2c7a4b; font-size: 20px; margin: 20px 0 10px; }
+    .hobby-list { list-style: none; padding: 0; }
+    .hobby-list li { padding: 8px 0; border-bottom: 1px solid #eee; color: #555; font-size: 15px; }
+    .hobby-list li::before { content: "✈️ "; }
+
+    /* CONTACT PAGE */
+    .contact-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+    @media(max-width: 600px) { .contact-wrap { grid-template-columns: 1fr; } }
+    .contact-form { background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .contact-form h2 { color: #2c7a4b; font-size: 24px; margin-bottom: 20px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 14px; color: #555; margin-bottom: 6px; font-weight: bold; }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 6px;
+      font-size: 15px; font-family: Georgia, serif; outline: none; transition: border 0.3s; }
+    .form-group input:focus, .form-group textarea:focus { border-color: #2c7a4b; }
+    .form-group textarea { height: 120px; resize: vertical; }
+    .btn-submit { background: #2c7a4b; color: white; border: none; padding: 12px 30px;
+      border-radius: 6px; font-size: 15px; cursor: pointer; transition: background 0.3s; }
+    .btn-submit:hover { background: #1e5c38; }
+    .contact-info { background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .contact-info h2 { color: #2c7a4b; font-size: 24px; margin-bottom: 20px; }
+    .info-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px; }
+    .info-icon { font-size: 22px; margin-top: 2px; }
+    .info-text h4 { font-size: 15px; color: #333; margin-bottom: 3px; }
+    .info-text p { font-size: 14px; color: #666; }
+    .social-links { margin-top: 24px; }
+    .social-links h3 { color: #2c7a4b; font-size: 16px; margin-bottom: 12px; }
+    .social-links a { display: inline-block; background: #e8f5e9; color: #2c7a4b; padding: 8px 16px;
+      border-radius: 20px; font-size: 13px; text-decoration: none; margin: 4px 4px 4px 0; transition: background 0.3s; }
+    .social-links a:hover { background: #2c7a4b; color: white; }
+
+    /* SUCCESS MSG */
+    .success-msg { display: none; background: #e8f5e9; border: 1px solid #2c7a4b; color: #1e5c38;
+      padding: 12px 16px; border-radius: 6px; margin-top: 14px; font-size: 14px; }
+
+    /* PAGE TITLE */
+    .page-title { text-align: center; margin-bottom: 30px; }
+    .page-title h2 { font-size: 30px; color: #2c7a4b; margin-bottom: 8px; }
+    .page-title p { color: #888; font-size: 15px; }
+
+    /* FOOTER */
+    footer { background-color: #2c7a4b; color: white; text-align: center; padding: 20px;
+      font-size: 14px; margin-top: 40px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🌿 My Travel Blog</h1>
+    <p>Exploring the world, one trip at a time</p>
+  </header>
+
+  <nav>
+    <a onclick="showPage('home')" class="active" id="nav-home">Home</a>
+    <a onclick="showPage('destinations')" id="nav-destinations">Destinations</a>
+    <a onclick="showPage('about')" id="nav-about">About</a>
+    <a onclick="showPage('contact')" id="nav-contact">Contact</a>
+  </nav>
+
+  <!-- ======================== HOME PAGE ======================== -->
+  <div class="page active" id="page-home">
+    <div class="container">
+      <section class="about">
+        <h2>Hello, I'm Prerana! </h2>
+        <p>I am a travel lover from Nepal who enjoys discovering new cultures,
+          tasting local food, and visiting beautiful places. This blog is where I share my adventures with you!</p>
+      </section>
+
+      <article class="blog-card">
+        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900" alt="Himalayas" />
+        <div class="card-content">
+          <h2>Trekking in the Himalayas</h2>
+          <p class="date">April 10, 2025</p>
+          <p>Nepal is home to the tallest mountains in the world. I recently trekked to Everest Base Camp and it was the most amazing
+            experience of my life. The views, the people, and the fresh mountain air were truly unforgettable.</p>
+          <a class="read-more" onclick="showPage('destinations')">Read More →</a>
+        </div>
+      </article>
+
+      <article class="blog-card">
+        <img src="https://images.unsplash.com/photo-1504214208698-ea1916a2195a?w=900" alt="Thailand Beach" />
+        <div class="card-content">
+          <h2>Beaches of Thailand</h2>
+          <p class="date">February 22, 2025</p>
+          <p>Thailand has some of the most beautiful beaches I have ever seen. The clear blue water, white sand, and delicious tropical food made
+            my trip to Phuket absolutely perfect. I also explored local temples and busy street food markets.</p>
+          <a class="read-more" onclick="showPage('destinations')">Read More →</a>
+        </div>
+      </article>
+
+      <article class="blog-card">
+        <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=900" alt="Paris" />
+        <div class="card-content">
+          <h2>A Weekend in Paris</h2>
+          <p class="date">December 5, 2024</p>
+          <p>Paris is everything you imagine it to be i.e.romantic, beautiful, and full of amazing food. I visited the Eiffel Tower, walked along
+            the Seine River, and ate the best croissants of my life. It was truly a dream trip!</p>
+          <a class="read-more" onclick="showPage('destinations')">Read More →</a>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <!-- ======================== DESTINATIONS PAGE ======================== -->
+  <div class="page" id="page-destinations">
+    <div class="container">
+      <div class="page-title">
+        <h2> My Destinations</h2>
+        <p>Places I have explored and loved around the world</p>
+      </div>
+      <div class="dest-grid">
+
+        <div class="dest-card">
+          <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600" alt="Nepal" />
+          <div class="dest-info">
+            <h3> Nepal - Everest Base Camp</h3>
+            <p>A life-changing trek through the Himalayas. Stunning landscapes, warm Sherpa hospitality, and the roof of the world.</p>
+            <span class="dest-tag">Trekking</span>
+            <span class="dest-tag">Adventure</span>
+          </div>
+        </div>
+
+        <div class="dest-card">
+          <img src="https://images.unsplash.com/photo-1504214208698-ea1916a2195a?w=600" alt="Thailand" />
+          <div class="dest-info">
+            <h3> Thailand - Phuket</h3>
+            <p>Crystal-clear waters, white sandy beaches, vibrant night markets, and the most amazing Pad Thai I've ever tasted.</p>
+            <span class="dest-tag">Beach</span>
+            <span class="dest-tag">Food</span>
+          </div>
+        </div>
+
+        <div class="dest-card">
+          <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600" alt="Paris" />
+          <div class="dest-info">
+            <h3> France - Paris</h3>
+            <p>The city of love! Eiffel Tower, the Louvre, Seine River walks, and buttery croissants at every corner café.</p>
+            <span class="dest-tag">Culture</span>
+            <span class="dest-tag">Romance</span>
+          </div>
+        </div>
+
+        <div class="dest-card">
+          <img src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=600" alt="India" />
+          <div class="dest-info">
+            <h3> India - Taj Mahal</h3>
+            <p>A majestic wonder of the world. The Taj Mahal at sunrise was breathtaking — the perfect blend of history and beauty.</p>
+            <span class="dest-tag">History</span>
+            <span class="dest-tag">Architecture</span>
+          </div>
+        </div>
+
+        <div class="dest-card">
+          <img src="https://images.unsplash.com/photo-1543158181-e6f9f6712055?w=600" alt="Japan" />
+          <div class="dest-info">
+            <h3> Japan - Tokyo</h3>
+            <p>Where ancient temples meet futuristic skyscrapers. The food, fashion, and friendly people made it unforgettable.</p>
+            <span class="dest-tag">City</span>
+            <span class="dest-tag">Food</span>
+          </div>
+        </div>
+
+        <div class="dest-card">
+          <img src="https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=600" alt="Maldives" />
+          <div class="dest-info">
+            <h3> Maldives - Island Paradise</h3>
+            <p>Overwater bungalows, turquoise lagoons, and vibrant coral reefs. This is what paradise looks like in real life!</p>
+            <span class="dest-tag">Beach</span>
+            <span class="dest-tag">Luxury</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== ABOUT PAGE ======================== -->
+  <div class="page" id="page-about">
+    <div class="container">
+      <div class="about-page">
+        <h2> About Me</h2>
+        <p>Hi! I'm <strong>Prerana</strong>, a passionate traveler and storyteller from the beautiful country of Nepal 🇳🇵. I grew up surrounded by the majestic Himalayas, which sparked my love for adventure and exploration from a very young age.</p>
+        <p>I started this blog to share my travel experiences, tips, and photos with people who love to travel just as much as I do. Whether it's a weekend trip or a month-long adventure, I believe every journey teaches us something new about the world — and about ourselves.</p>
+
+        <div class="stats">
+          <div class="stat-box">
+            <h3>12+</h3>
+            <p>Countries Visited</p>
+          </div>
+          <div class="stat-box">
+            <h3>35+</h3>
+            <p>Blog Posts Written</p>
+          </div>
+          <div class="stat-box">
+            <h3>5K+</h3>
+            <p>Monthly Readers</p>
+          </div>
+          <div class="stat-box">
+            <h3>3</h3>
+            <p>Years Blogging</p>
+          </div>
+        </div>
+
+        <h3> What I Love</h3>
+        <ul class="hobby-list">
+          <li>Trekking through mountains and nature trails</li>
+          <li>Trying authentic local cuisines everywhere I go</li>
+          <li>Learning about different cultures and traditions</li>
+          <li>Photography — capturing beautiful moments</li>
+          <li>Meeting fellow travelers and making lifelong friends</li>
+          <li>Sustainable and responsible travel</li>
+        </ul>
+
+        <h3> My Travel Philosophy</h3>
+        <p>I believe travel is not just about visiting places — it's about connecting with people, understanding different ways of life, and growing as a person. I always try to travel responsibly, respect local cultures, and leave every place better than I found it.</p>
+
+        <p style="margin-top:16px;">Want to follow my journey? <a href="#" onclick="showPage('contact')" style="color:#2c7a4b;font-weight:bold;">Get in touch</a> or check out my <a href="#" onclick="showPage('destinations')" style="color:#2c7a4b;font-weight:bold;">Destinations</a> page!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== CONTACT PAGE ======================== -->
+  <div class="page" id="page-contact">
+    <div class="container">
+      <div class="page-title">
+        <h2>📬 Contact Me</h2>
+        <p>Have a question or want to collaborate? I'd love to hear from you!</p>
+      </div>
+      <div class="contact-wrap">
+
+        <!-- FORM -->
+        <div class="contact-form">
+          <h2>Send a Message</h2>
+          <div class="form-group">
+            <label>Your Name</label>
+            <input type="text" id="fname" placeholder="e.g. Anita Sharma" />
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="femail" placeholder="you@example.com" />
+          </div>
+          <div class="form-group">
+            <label>Subject</label>
+            <select id="fsubject">
+              <option value="">-- Select a topic --</option>
+              <option>Travel Collaboration</option>
+              <option>Blog Feedback</option>
+              <option>Travel Tips & Questions</option>
+              <option>General Inquiry</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Message</label>
+            <textarea id="fmessage" placeholder="Write your message here..."></textarea>
+          </div>
+          <button class="btn-submit" onclick="submitForm()">Send Message ✉️</button>
+          <div class="success-msg" id="successMsg">✅ Thank you! Your message has been sent. I'll get back to you soon!</div>
+        </div>
+
+        <!-- CONTACT INFO -->
+        <div class="contact-info">
+          <h2>Get In Touch</h2>
+          <div class="info-item">
+            <span class="info-icon">📍</span>
+            <div class="info-text">
+              <h4>Location</h4>
+              <p>Kathmandu, Nepal</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">📧</span>
+            <div class="info-text">
+              <h4>Email</h4>
+              <p>prerana@mytravelblog.com</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">📸</span>
+            <div class="info-text">
+              <h4>Instagram</h4>
+              <p>@prerana.travels</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">🕒</span>
+            <div class="info-text">
+              <h4>Response Time</h4>
+              <p>Usually within 1,2 business days</p>
+            </div>
+          </div>
+          <div class="social-links">
+            <h3>Follow My Journey</h3>
+            <a href="#"> Instagram</a>
+            <a href="#"> YouTube</a>
+            <a href="#">Twitter</a>
+            <a href="#"> Facebook</a>
+            <a href="#"> Pinterest</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 My Travel Blog | Made with  by Prerana</p>
+  </footer>
+
+  <script>
+    function showPage(name) {
+      // Hide all pages
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      // Remove active from all nav links
+      document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+      // Show selected page
+      document.getElementById('page-' + name).classList.add('active');
+      // Highlight nav link
+      document.getElementById('nav-' + name).classList.add('active');
+      // Scroll to top
+      window.scrollTo(0, 0);
+    }
+
+    function submitForm() {
+      const name = document.getElementById('fname').value.trim();
+      const email = document.getElementById('femail').value.trim();
+      const msg = document.getElementById('fmessage').value.trim();
+      if (!name || !email || !msg) {
+        alert('Please fill in your name, email, and message before sending!');
+        return;
+      }
+      document.getElementById('successMsg').style.display = 'block';
+      document.getElementById('fname').value = '';
+      document.getElementById('femail').value = '';
+      document.getElementById('fsubject').value = '';
+      document.getElementById('fmessage').value = '';
+    }
+  </script>
+
+</body>
+</html>
